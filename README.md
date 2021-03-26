@@ -2,7 +2,7 @@
 
 # 克隆远程仓库
 
-将本地主机与GitHub账户管理
+如果本地主机尚未与github账户关联，可以参考👇链接。
 
 https://docs.github.com/cn/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account
 
