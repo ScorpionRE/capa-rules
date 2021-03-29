@@ -1,8 +1,8 @@
 rule:
   meta:
-    name: reference anti-VM strings
+    name: check vm by filesystem
     namespace: anti-analysis/anti-vm/vm-detection
-    author: moritz.raabe@fireeye.com
+    author: to-verify-ty
     scope: file
     att&ck:
       - Defense Evasion::Virtualization/Sandbox Evasion::System Checks [T1497.001]
@@ -10,8 +10,6 @@ rule:
       - Anti-Behavioral Analysis::Virtual Machine Detection [B0009]
     references:
       - https://evasions.checkpoint.com/techniques/filesystem.html
-    examples:
-      - Practical Malware Analysis Lab 17-02.dll_
   features:
     - or:
       - or:

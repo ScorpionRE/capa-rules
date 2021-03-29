@@ -1,15 +1,15 @@
 rule:
   meta:
-    name: execute anti-VM instructions
+    name: check vm by cpu instructions
     namespace: anti-analysis/anti-vm/vm-detection
-    author: moritz.raabe@fireeye.com
+    author: to-verify-ty
     scope: basic block
     att&ck:
       - Defense Evasion::Virtualization/Sandbox Evasion::System Checks [T1497.001]
     mbc:
       - Anti-Behavioral Analysis::Virtual Machine Detection::Instruction Testing [B0009.029]
-    examples:
-      - Practical Malware Analysis Lab 17-03.exe_:0x401A80
+    references:
+      - https://evasions.checkpoint.com/techniques/cpu.html
   features:
     - or:
       - and:
