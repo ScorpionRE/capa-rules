@@ -1,0 +1,24 @@
+rule:
+  meta:
+    name: reference anti-VM strings
+    namespace: anti-analysis/anti-vm/vm-detection
+    author: moritz.raabe@fireeye.com
+    scope: file
+    att&ck:
+      - Defense Evasion::Virtualization/Sandbox Evasion::System Checks [T1497.001]
+    mbc:
+      - Anti-Behavioral Analysis::Virtual Machine Detection [B0009]
+    references:
+      - https://evasions.checkpoint.com/techniques/filesystem.html
+    examples:
+      - Practical Malware Analysis Lab 17-02.dll_
+  features:
+    - or:
+      - or:
+        - string: /\\SAMPLE/i
+        - string: /\\VIRUS/i
+        - string: /SANDBOX/i
+        - api: GetModuleFileName
+        - api: GetProcessImageFileName
+        - api: QueryFullProcessImageName
+      - string: /insidetm/i

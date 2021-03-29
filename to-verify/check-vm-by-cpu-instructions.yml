@@ -1,0 +1,29 @@
+rule:
+  meta:
+    name: execute anti-VM instructions
+    namespace: anti-analysis/anti-vm/vm-detection
+    author: moritz.raabe@fireeye.com
+    scope: basic block
+    att&ck:
+      - Defense Evasion::Virtualization/Sandbox Evasion::System Checks [T1497.001]
+    mbc:
+      - Anti-Behavioral Analysis::Virtual Machine Detection::Instruction Testing [B0009.029]
+    examples:
+      - Practical Malware Analysis Lab 17-03.exe_:0x401A80
+  features:
+    - or:
+      - and:
+        - mnemonic: in
+        - or:
+          - string: 'VX'
+          - string: 'VMXh'
+      - mnemonic: vpcext
+      - and:
+        - mnemonic: cpuid
+        - or:
+          - number: 0x40000000 = Check_vendor_ID_string 
+          - number: 1 = Check_if_being_run_in_Hypervisor
+      - or:
+        description: virtualpc_only_instructions
+        - bytes: 0f 3f 0d 00 
+        - bytes: 0f c7 c8 05 00
