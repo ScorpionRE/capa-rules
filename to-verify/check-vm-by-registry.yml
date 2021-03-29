@@ -1,0 +1,103 @@
+rule:
+  meta:
+    name: check vm by registry
+    namespace: anti-analysis/anti-vm/vm-detection
+    author: to-verify-ty
+    scope: file
+    att&ck:
+      - Defense Evasion::Virtualization/Sandbox Evasion::System Checks [T1497.001]
+    mbc:
+      - Anti-Behavioral Analysis::Virtual Machine Detection [B0009]
+    references:
+      - https://evasions.checkpoint.com/techniques/registry.html
+  features:
+    - or:
+      - or:
+      description: Check if particular registry paths exist
+      # Hyper-V
+      - or:
+        - and:
+          - string: HKLM\SOFTWARE\Microsoft
+          - string: /(Hyper-V|VirtualMachine)/i
+        - string: /HKLM\\SOFTWARE\\Microsoft\\(Hyper-V|VirtualMachine|Virtual Machine\\Guest\\Parameters)/i
+      - or:
+        - and:
+          - string: HKLM\SYSTEM\ControlSet001\Services
+          - string: /(vmicheartbeat|vmicvss|vmicshutdown|vmicexchange)/i
+        - string: /HKLM\\SYSTEM\\ControlSet001\\Services\\(vmicheartbeat|vmicvss|vmicshutdown|vmicexchange)/i
+      # Parallels
+      - or:
+        - and: 
+          - string: HKLM\SYSTEM\CurrentControlSet\Enum\PCI
+          - string: /VEN_1AB8*/i
+        - string: /HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI\\VEN_1AB8*/i
+      # Sandboxie
+      - or:
+        - and: 
+          - string: HKLM\SYSTEM\CurrentControlSet\Services
+          - string: SbieDrv
+        - and: 
+          - string: /HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall
+          - string: Sandboxie
+        - string: /HKLM\\SYSTEM\\CurrentControlSet\\Services\\SbieDrv/i
+        - string: /HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Sandboxie/i
+      # VituralBox
+      - or:
+        - and: 
+          - string: HKLM\SYSTEM\CurrentControlSet\Enum\PCI
+          - string: /VEN_80EE*/i
+        - and: 
+          - string: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall
+          - string: Sandboxie
+        - and: 
+          - string: HKLM\SOFTWARE\Oracle
+          - string: VirtualBox Guest Additions
+        - and: 
+          - string: HKLM\SYSTEM\ControlSet001\Services
+          - string: /(VBoxGuest|VBoxMouse|VBoxService|VBoxSF|VBoxVideo)/i
+        - string: /HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI\\VEN_80EE*/i
+        - string: /HKLM\\HARDWARE\\ACPI\\(DSDT|FADT|RSDT)VBOX__/i
+        - string: /HKLM\\SOFTWARE\\Oracle\\VirtualBox Guest Additions/i
+        - string: /HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI\\VEN_80EE*/i
+        - string: /HKLM\\SYSTEM\\ControlSet001\\Services\\(VBoxGuest|VBoxMouse|VBoxService|VBoxSF|VBoxVideo)/i
+      # VirtualPC
+      - or:
+        - and: 
+          - string: HKLM\SYSTEM\CurrentControlSet\Enum\PCI
+          - string: /VEN_5333*/i
+        - and: 
+          - string: HKLM\SYSTEM\ControlSet001\Services
+          - string: /(vpcbus|vpc-s3|vpcuhub|msvmmouf)/i
+        - string: /HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI\\VEN_5333*/i
+        - string: /HKLM\\SYSTEM\\ControlSet001\\Services\\(vpcbus|vpc-s3|vpcuhub|msvmmouf)/i
+      # VMware
+      - or:
+        - and: 
+          - string: HKLM\SYSTEM\CurrentControlSet\Enum\PCI
+          - string: /VEN_15AD*/i
+        - and: 
+          - string: HKLM\SYSTEM\ControlSet001\Services
+          - string: /(vmdebug|vmmouse|VMTools|VMMEMCTL|vmware|vmci|vmx86)/i
+        - and: 
+          - string: HKLM\SYSTEM\CurrentControlSet\Enum\IDE
+          - string: /(CdRomNECVMWar_VMware_IDE_CD*|CdRomNECVMWar_VMware_SATA_CD*|DiskVMware_Virtual_IDE_Hard_Drive*|DiskVMware_Virtual_SATA_Hard_Drive*)/i
+        - string: /HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI\\VEN_15AD*/i
+        - string: /(HKLM|HKCU)\\SOFTWARE\\VMware, Inc.\\VMware Tools/i
+        - string: /HKLM\\SYSTEM\\ControlSet001\\Services\\(vmdebug|vmmouse|VMTools|VMMEMCTL|vmware|vmci|vmx86)/i
+        - string: /HKLM\\SYSTEM\\CurrentControlSet\\Enum\\IDE\\(CdRomNECVMWar_VMware_IDE_CD*|CdRomNECVMWar_VMware_SATA_CD*|DiskVMware_Virtual_IDE_Hard_Drive*|DiskVMware_Virtual_SATA_Hard_Drive*)/i
+      # Wine
+      - or:    
+        - string: /(HKCU|HKLM)\\SOFTWARE\\Wine)/i  
+      # Xen
+      - or:
+        - and: 
+          - string: HKLM\SYSTEM\ControlSet001\Services
+          - string: /(xenevtchn|xennet|xennet6|xensvc|xenvdb)/i
+        - string: /HKLM\\HARDWARE\\ACPI\\(DSDT|FADT|RSDT)\\xen/i
+        - string: /HKLM\\SYSTEM\\ControlSet001\\Services\\(xenevtchn|xennet|xennet6|xensvc|xenvdb)/i
+      # find specified strings, some in other rules not add
+      - string: /(76487|55274)-(337|644|640)-(8429955|3177037|2673064)-(22614|23510|23950)/i
+      - string: /INTEL - 6040000/i
+      - string: /*vmx*/i
+      - string: /VMware*/i 
+      - string: /vm3dmp/i 
